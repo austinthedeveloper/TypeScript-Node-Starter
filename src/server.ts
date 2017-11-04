@@ -14,6 +14,7 @@ import * as flash from "express-flash";
 import * as path from "path";
 import * as mongoose from "mongoose";
 import * as passport from "passport";
+import * as cors from "cors";
 import expressValidator = require("express-validator");
 
 
@@ -30,8 +31,12 @@ dotenv.config({ path: ".env.example" });
  */
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
-import * as apiController from "./controllers/api";
-import * as contactController from "./controllers/contact";
+import { ApiController } from "./controllers/api";
+import { ContactController } from "./controllers/contact";
+import { RetroController } from "./controllers/retro";
+const contactController = new ContactController();
+const apiController = new ApiController();
+const retroController = new RetroController();
 
 /**
  * API keys and Passport configuration.
@@ -59,11 +64,12 @@ mongoose.connection.on("error", () => {
 /**
  * Express configuration.
  */
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 8080);
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
 app.use(compression());
 app.use(logger("dev"));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
@@ -128,6 +134,16 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userControl
 app.get("/api", apiController.getApi);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
+const retroPath = "/api/retro/";
+app.get(`${retroPath}users`, retroController.getUsers);
+app.get(`${retroPath}user/:user`, retroController.getUser);
+app.get(`${retroPath}user/:user/summary`, retroController.getUserSummary);
+app.get(`${retroPath}user/:user/feed`, retroController.getUserFeed);
+app.get(`${retroPath}user/:user/recent`, retroController.getUserRecent);
+app.get(`${retroPath}user/:user/game/:game`, retroController.getUserProgress);
+app.get(`${retroPath}game/:game`, retroController.getGame);
+app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
+app.get(`${retroPath}console-ids`, retroController.getConsoles);
 /**
  * OAuth authentication routes. (Sign in)
  */
