@@ -40,6 +40,7 @@ export class RetroController {
       retroService.getUserSummary(req.params.user, 5)
       .then((data) => {
         data = JSON.parse(data);
+        // data.RecentlyPlayed = retroService.mapGames(data.RecentlyPlayed);
         data = retroService.mapAchievements(data);
         res.send(data);
       })

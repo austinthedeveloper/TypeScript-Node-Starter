@@ -96,16 +96,20 @@ export class RetroService {
     }
 
     mapGames(games: any[]) {
-        games = _.map(games, (game: any) => {
-            game.ImageIcon = this.buildIcon(game.ImageIcon);
+        games = _.chain(games)
+          .map((game: any) => {
+            game.ImageIcon = game.ImageIcon ? this.buildIcon(game.ImageIcon) : undefined;
             return game;
-        });
+          })
+          .value();
         return games;
     }
 
     mapAchievements(data: any) {
         data.UserPic = this.buildUserPic(data.UserPic);
-        data.RecentlyPlayed = _.map(data.RecentlyPlayed, (game: any) => {
+        data.RecentlyPlayed = _.chain(data.RecentlyPlayed)
+        .filter("Title")
+        .map((game: any) => {
             game.ImageIcon = `${this.retroImageUrl}${game.ImageIcon}`;
             if (data.RecentAchievements && data.RecentAchievements[game.GameID]) {
                 game.achievements = [];
@@ -121,23 +125,22 @@ export class RetroService {
                 });
             }
             return game;
-        });
+        })
+        .value();
         delete data.RecentAchievements;
         return data;
     }
     mapFeed(data: any[]) {
         const res = _.chain(data)
-            .filter((i) => (i.activitytype !== "2"))
-            .filter((i) => (i.GameTitle !== "<New Title>"))
             .filter("GameTitle")
             .map((i) => {
+              i.GameIcon = i.GameIcon ? this.buildIcon(i.GameIcon) : undefined;
                 switch (i.activitytype) {
                     case ("1"):
                         i.GameIcon = this.buildBadge(i.AchBadge);
                         i.message = `Achievement`;
                         break;
                     case ("3"):
-                        i.GameIcon = i.GameIcon ? this.buildIcon(i.GameIcon) : undefined;
                         i.message = `Started Playing`;
                         break;
                 }
