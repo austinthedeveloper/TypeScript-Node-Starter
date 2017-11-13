@@ -156,6 +156,6 @@ export class RetroService {
     }
 
     buildUserPic(icon: string) {
-        return `http://retroachievements.org/${icon}`;
+        return `http://retroachievements.org${icon}`;
     }
 }
