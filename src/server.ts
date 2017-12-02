@@ -34,9 +34,11 @@ import * as userController from "./controllers/user";
 import { ApiController } from "./controllers/api";
 import { ContactController } from "./controllers/contact";
 import { RetroController } from "./controllers/retro";
+import { BeerController } from "./controllers/beer";
 const contactController = new ContactController();
 const apiController = new ApiController();
 const retroController = new RetroController();
+const beerController = new BeerController();
 
 /**
  * API keys and Passport configuration.
@@ -144,6 +146,11 @@ app.get(`${retroPath}user/:user/game/:game`, retroController.getUserProgress);
 app.get(`${retroPath}game/:game`, retroController.getGame);
 app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
 app.get(`${retroPath}console-ids`, retroController.getConsoles);
+
+const beerPath = "/api/beer/";
+app.get(`${beerPath}brewery/:brewery`, beerController.getBrewery);
+app.get(`${beerPath}brewery/:brewery/:page`, beerController.getBreweryBeers);
+app.get(`${beerPath}brewery/:brewery/beers`, beerController.getBreweryBeers);
 /**
  * OAuth authentication routes. (Sign in)
  */
