@@ -15,10 +15,11 @@ export class RetroService {
         const res = {
             method: "GET",
             qs: {
-                y: "by8GibVhzYFOHpn1zYmUqT19gPWK5xY7",
+                y: process.env.retro,
                 z: "foleykoontz",
             },
             uri: `${this.retroUrl}${uri}.php`,
+            json: true
         };
         res.qs = params ? _.assign(res.qs, params) : res.qs;
         return res;

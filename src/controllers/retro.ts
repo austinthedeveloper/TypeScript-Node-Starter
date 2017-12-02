@@ -19,7 +19,6 @@ export class RetroController {
     getUsers(req: Request, res: Response) {
       retroService.getTop10()
       .then((data) => {
-          data = JSON.parse(data);
           res.send(data);
       })
       .catch((err) => {
@@ -29,7 +28,6 @@ export class RetroController {
     getUser(req: Request, res: Response) {
       retroService.getUser(req.params.user)
       .then((data) => {
-          data = JSON.parse(data);
           res.send(data);
       })
       .catch((err) => {
@@ -39,7 +37,6 @@ export class RetroController {
     getUserSummary(req: Request, res: Response) {
       retroService.getUserSummary(req.params.user, 5)
       .then((data) => {
-        data = JSON.parse(data);
         // data.RecentlyPlayed = retroService.mapGames(data.RecentlyPlayed);
         data = retroService.mapAchievements(data);
         res.send(data);
@@ -51,7 +48,6 @@ export class RetroController {
     getUserFeed(req: Request, res: Response) {
       retroService.getUserFeed(req.params.user, 30)
       .then((data) => {
-        data = JSON.parse(data);
         data = retroService.mapFeed(data);
         res.send(data);
       })
@@ -62,7 +58,6 @@ export class RetroController {
     getUserRecent(req: Request, res: Response) {
       retroService.getRecent(req.params.user)
       .then((data) => {
-        data = JSON.parse(data);
         data = retroService.mapGames(data);
         res.send(data);
       })
@@ -73,7 +68,6 @@ export class RetroController {
     getUserProgress(req: Request, res: Response) {
       retroService.getGameProgress(req.params.user, req.params.game)
       .then((data) => {
-        data = JSON.parse(data);
         res.send(data);
       })
       .catch((err) => {
@@ -83,7 +77,6 @@ export class RetroController {
     getGame(req: Request, res: Response) {
       retroService.getGameInfo(req.params.game)
       .then((data) => {
-        data = JSON.parse(data);
         res.send(data);
       })
       .catch((err) => {
@@ -93,7 +86,6 @@ export class RetroController {
     getGameExt(req: Request, res: Response) {
       retroService.getGameInfoExtended(req.params.game)
       .then((data) => {
-        data = JSON.parse(data);
         res.send(data);
       })
       .catch((err) => {
@@ -103,7 +95,6 @@ export class RetroController {
     getConsoles(req: Request, res: Response) {
       retroService.getConsoleIds()
       .then((data) => {
-        data = JSON.parse(data);
         res.send(data);
       })
       .catch((err) => {
