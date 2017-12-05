@@ -148,9 +148,11 @@ app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
 app.get(`${retroPath}console-ids`, retroController.getConsoles);
 
 const beerPath = "/api/beer/";
-app.get(`${beerPath}brewery/:brewery`, beerController.getBrewery);
-app.get(`${beerPath}brewery/:brewery/:page`, beerController.getBreweryBeers);
-app.get(`${beerPath}brewery/:brewery/beers`, beerController.getBreweryBeers);
+app.get(`${beerPath}brewery/search`, beerController.findBrewery);
+app.get(`${beerPath}brewery/:id`, beerController.getBrewery);
+app.get(`${beerPath}brewery/:id/beers`, beerController.getBreweryBeers);
+app.post(`${beerPath}beers/save`, beerController.saveBeer);
+
 /**
  * OAuth authentication routes. (Sign in)
  */
