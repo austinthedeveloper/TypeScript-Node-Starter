@@ -2,6 +2,7 @@ import * as async from "async";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
 import * as passport from "passport";
+import * as _ from "lodash";
 import { default as User, UserModel, AuthToken } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 import { LocalStrategyInfo } from "passport-local";
@@ -34,20 +35,37 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/login");
+    // req.flash("errors", errors);
+    // return res.redirect("/login");
+    res.status(400);
+    res.send({ message: errors });
+    return;
   }
 
   passport.authenticate("local", (err: Error, user: UserModel, info: LocalStrategyInfo) => {
-    if (err) { return next(err); }
+    if (err) {
+      res.status(400);
+      res.send({ message: err });
+      return;
+    }
     if (!user) {
-      req.flash("errors", info.message);
-      return res.redirect("/login");
+      res.status(400);
+      res.send({ message: info.message });
+      return;
+      // req.flash("errors", info.message);
+      // return res.redirect("/login");
     }
     req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      req.flash("success", { msg: "Success! You are logged in." });
-      res.redirect(req.session.returnTo || "/");
+      if (err) {
+        res.status(400);
+        res.send({ message: info.message });
+        return;
+        // return next(err);
+      }
+
+      res.send({ user: user});
+      // req.flash("success", { msg: "Success! You are logged in." });
+      // res.redirect(req.session.returnTo || "/");
     });
   })(req, res, next);
 };
@@ -58,7 +76,8 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
  */
 export let logout = (req: Request, res: Response) => {
   req.logout();
-  res.redirect("/");
+  res.send({msg: "Logged Out"});
+  // res.redirect("/");
 };
 
 /**
@@ -87,8 +106,11 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/signup");
+    // req.flash("errors", errors);
+    res.status(400);
+    res.send({message: errors});
+    return;
+    // return res.redirect("/signup");
   }
 
   const user = new User({
@@ -99,16 +121,27 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   User.findOne({ email: req.body.email }, (err, existingUser) => {
     if (err) { return next(err); }
     if (existingUser) {
-      req.flash("errors", { msg: "Account with that email address already exists." });
-      return res.redirect("/signup");
+      // req.flash("errors", { msg: "Account with that email address already exists." });
+      res.status(400);
+      res.send({ msg: "Account with that email address already exists." });
+      return;
+      // return res.redirect("/signup");
     }
     user.save((err) => {
-      if (err) { return next(err); }
+      if (err) {
+        res.status(400);
+        res.send({ msg: err });
+        return;
+      }
       req.logIn(user, (err) => {
         if (err) {
-          return next(err);
+          res.status(400);
+          res.send({ msg: err });
+          return;
         }
-        res.redirect("/");
+        res.send({ msg: "Success" });
+        return;
+        // res.redirect("/");
       });
     });
   });

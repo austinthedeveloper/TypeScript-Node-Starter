@@ -8,6 +8,10 @@ export type UserModel = mongoose.Document & {
   passwordResetToken: string,
   passwordResetExpires: Date,
 
+  name: string,
+  company: string,
+  phone: string,
+
   facebook: string,
   tokens: AuthToken[],
 
@@ -33,6 +37,10 @@ const userSchema = new mongoose.Schema({
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
+
+  name: String,
+  company: String,
+  phone: String,
 
   facebook: String,
   twitter: String,
