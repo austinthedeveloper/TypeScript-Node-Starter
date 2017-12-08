@@ -54,6 +54,8 @@ export class BeerController {
     const options = beerService.options(`brewery/${req.params.id}/beers`);
     request(options)
       .then((data) => {
+        // const beer = new BeerDetails(data.data);
+        BeerDetails.create(data.data);
         res.send(data.data);
       })
       .catch((err) => {

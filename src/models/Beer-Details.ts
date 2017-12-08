@@ -39,6 +39,7 @@ export type BeerDetailsModel = mongoose.Document & {
       createDate: Date
     },
     name: string,
+    nameDisplay: string,
     shortName: string,
     description: string,
     ibuMin: string,
@@ -57,6 +58,8 @@ export type BeerDetailsModel = mongoose.Document & {
 
 const beerDetailsSchema = new mongoose.Schema({
   id: { type: String, unique: true },
+  name: String,
+  nameDisplay: String,
   abv: String,
   ibu: String,
   glasswareId: Number,
