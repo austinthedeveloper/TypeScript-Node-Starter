@@ -10,7 +10,7 @@ export type BeerModel = mongoose.Document & {
   ibu: string,
   icon: string,
   category: string,
-  stock: string,
+  stock: boolean,
   type: string,
   user: string
 };
@@ -23,8 +23,8 @@ const beerSchema = new mongoose.Schema({
   ibu: String,
   icon: String,
   category: String,
-  stock: String,
-  type: String,
+  stock: { type: Boolean, default: true },
+  type: { type: String, default: "keg" },
   user: String
 });
 

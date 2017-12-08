@@ -8,10 +8,6 @@ export type UserModel = mongoose.Document & {
   passwordResetToken: string,
   passwordResetExpires: Date,
 
-  name: string,
-  company: string,
-  phone: string,
-
   facebook: string,
   tokens: AuthToken[],
 
@@ -20,7 +16,9 @@ export type UserModel = mongoose.Document & {
     gender: string,
     location: string,
     website: string,
-    picture: string
+    picture: string,
+    company: string,
+    phone: string,
   },
 
   comparePassword: (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void,
@@ -38,10 +36,6 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
 
-  name: String,
-  company: String,
-  phone: String,
-
   facebook: String,
   twitter: String,
   google: String,
@@ -52,7 +46,9 @@ const userSchema = new mongoose.Schema({
     gender: String,
     location: String,
     website: String,
-    picture: String
+    picture: String,
+    company: String,
+    phone: String
   }
 }, { timestamps: true });
 

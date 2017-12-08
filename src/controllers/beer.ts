@@ -96,13 +96,13 @@ export class BeerController {
         return;
       } else if (!data) {
         const beer = new Beer(body);
-        beer.save((err) => {
+        beer.save((err, data) => {
           if (err) {
             res.status(400);
             res.send({ message: err });
             return;
           } else {
-            res.send({ message: "success" });
+            res.send({ data });
           }
         });
       } else {
@@ -134,7 +134,7 @@ export class BeerController {
         res.send({ message: err });
         return;
       } else {
-        res.send({ data: data });
+        res.send(data);
         return;
       }
     });
