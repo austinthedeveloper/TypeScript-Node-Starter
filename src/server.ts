@@ -31,12 +31,15 @@ dotenv.config({ path: ".env.example" });
  */
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
+import * as userApiController from "./controllers/user.api";
 import { ApiController } from "./controllers/api";
 import { ContactController } from "./controllers/contact";
 import { RetroController } from "./controllers/retro";
+import { BeerController } from "./controllers/beer";
 const contactController = new ContactController();
 const apiController = new ApiController();
 const retroController = new RetroController();
+const beerController = new BeerController();
 
 /**
  * API keys and Passport configuration.
@@ -58,8 +61,6 @@ mongoose.connection.on("error", () => {
   console.log("MongoDB connection error. Please make sure MongoDB is running.");
   process.exit();
 });
-
-
 
 /**
  * Express configuration.
@@ -129,6 +130,26 @@ app.post("/account/delete", passportConfig.isAuthenticated, userController.postD
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 /**
+ * API User routes
+ */
+app.get("/api/login", userApiController.getLogin);
+app.post("/api/login", userApiController.postLogin);
+app.get("/api/logout", userApiController.logout);
+app.get("/api/forgot", userApiController.getForgot);
+app.post("/api/forgot", userApiController.postForgot);
+app.get("/api/reset/:token", userApiController.getReset);
+app.post("/api/reset/:token", userApiController.postReset);
+app.get("/api/signup", userApiController.getSignup);
+app.post("/api/signup", userApiController.postSignup);
+app.get("/api/contact", contactController.getContact);
+app.post("/api/contact", contactController.postContact);
+app.get("/api/account", passportConfig.isAuthenticated, userApiController.getAccount);
+app.post("/api/account/profile", passportConfig.isAuthenticated, userApiController.postUpdateProfile);
+app.post("/api/account/password", passportConfig.isAuthenticated, userApiController.postUpdatePassword);
+app.post("/api/account/delete", passportConfig.isAuthenticated, userApiController.postDeleteAccount);
+app.get("/api/account/unlink/:provider", passportConfig.isAuthenticated, userApiController.getOauthUnlink);
+
+/**
  * API examples routes.
  */
 app.get("/api", apiController.getApi);
@@ -144,6 +165,16 @@ app.get(`${retroPath}user/:user/game/:game`, retroController.getUserProgress);
 app.get(`${retroPath}game/:game`, retroController.getGame);
 app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
 app.get(`${retroPath}console-ids`, retroController.getConsoles);
+
+const beerPath = "/api/beer/";
+app.get(`${beerPath}brewery/search`, beerController.findBrewery);
+app.get(`${beerPath}brewery/:id`, beerController.getBrewery);
+app.get(`${beerPath}brewery/:id/beers`, beerController.getBreweryBeers);
+app.post(`${beerPath}beers/save`, beerController.saveBeer);
+app.post(`${beerPath}beers/delete`, beerController.deleteBeer);
+app.get(`${beerPath}beers/:id`, beerController.savedBeers);
+app.get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
+
 /**
  * OAuth authentication routes. (Sign in)
  */
