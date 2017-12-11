@@ -2,6 +2,7 @@ import * as async from "async";
 import * as crypto from "crypto";
 import * as nodemailer from "nodemailer";
 import * as passport from "passport";
+import * as _ from "lodash";
 import { default as User, UserModel, AuthToken } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 import { LocalStrategyInfo } from "passport-local";
@@ -34,20 +35,38 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/login");
+    // req.flash("errors", errors);
+    // return res.redirect("/login");
+    const newObj = _.map(errors, "msg");
+    res.status(400);
+    res.send({ message: newObj });
+    return;
   }
 
   passport.authenticate("local", (err: Error, user: UserModel, info: LocalStrategyInfo) => {
-    if (err) { return next(err); }
+    if (err) {
+      res.status(400);
+      res.send({ message: err });
+      return;
+    }
     if (!user) {
-      req.flash("errors", info.message);
-      return res.redirect("/login");
+      res.status(400);
+      res.send({ message: info.message });
+      return;
+      // req.flash("errors", info.message);
+      // return res.redirect("/login");
     }
     req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      req.flash("success", { msg: "Success! You are logged in." });
-      res.redirect(req.session.returnTo || "/");
+      if (err) {
+        res.status(400);
+        res.send({ message: info.message });
+        return;
+        // return next(err);
+      }
+
+      res.send(user);
+      // req.flash("success", { msg: "Success! You are logged in." });
+      // res.redirect(req.session.returnTo || "/");
     });
   })(req, res, next);
 };
@@ -58,7 +77,8 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
  */
 export let logout = (req: Request, res: Response) => {
   req.logout();
-  res.redirect("/");
+  res.send({ message: "Logged Out"});
+  // res.redirect("/");
 };
 
 /**
@@ -87,8 +107,12 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/signup");
+    // req.flash("errors", errors);
+    res.status(400);
+    const newObj = _.map(errors, "msg");
+    res.send({ message: newObj});
+    return;
+    // return res.redirect("/signup");
   }
 
   const user = new User({
@@ -99,16 +123,27 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   User.findOne({ email: req.body.email }, (err, existingUser) => {
     if (err) { return next(err); }
     if (existingUser) {
-      req.flash("errors", { msg: "Account with that email address already exists." });
-      return res.redirect("/signup");
+      // req.flash("errors", { msg: "Account with that email address already exists." });
+      res.status(400);
+      res.send({ message: "Account with that email address already exists." });
+      return;
+      // return res.redirect("/signup");
     }
     user.save((err) => {
-      if (err) { return next(err); }
+      if (err) {
+        res.status(400);
+        res.send({ message: err });
+        return;
+      }
       req.logIn(user, (err) => {
         if (err) {
-          return next(err);
+          res.status(400);
+          res.send({ message: err });
+          return;
         }
-        res.redirect("/");
+        res.send({ message: "Success" });
+        return;
+        // res.redirect("/");
       });
     });
   });
@@ -135,12 +170,19 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/account");
+    res.status(400);
+    res.send({ message: errors });
+    return;
+    // req.flash("errors", errors);
+    // return res.redirect("/account");
   }
 
   User.findById(req.user.id, (err, user: UserModel) => {
-    if (err) { return next(err); }
+    if (err) {
+      res.status(400);
+      res.send({ message: err });
+      return;
+     }
     user.email = req.body.email || "";
     user.profile.name = req.body.name || "";
     user.profile.gender = req.body.gender || "";
@@ -149,13 +191,18 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
     user.save((err: WriteError) => {
       if (err) {
         if (err.code === 11000) {
-          req.flash("errors", { msg: "The email address you have entered is already associated with an account." });
-          return res.redirect("/account");
+          res.status(400);
+          res.send({ message: "The email address you have entered is already associated with an account." });
+          return;
         }
-        return next(err);
+
+        res.status(400);
+        res.send({ message: err });
+        return;
       }
-      req.flash("success", { msg: "Profile information has been updated." });
-      res.redirect("/account");
+      res.send({ message: "Profile information has been updated."});
+      // req.flash("success", { msg: "Profile information has been updated." });
+      // res.redirect("/account");
     });
   });
 };
