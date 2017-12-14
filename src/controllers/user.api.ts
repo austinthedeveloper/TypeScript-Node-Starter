@@ -9,20 +9,6 @@ import { LocalStrategyInfo } from "passport-local";
 import { WriteError } from "mongodb";
 const request = require("express-validator");
 
-
-/**
- * GET /login
- * Login page.
- */
-export let getLogin = (req: Request, res: Response) => {
-  if (req.user) {
-    return res.redirect("/");
-  }
-  res.render("account/login", {
-    title: "Login"
-  });
-};
-
 /**
  * POST /login
  * Sign in using email and password.
@@ -35,8 +21,6 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    // req.flash("errors", errors);
-    // return res.redirect("/login");
     const newObj = _.map(errors, "msg");
     res.status(400);
     res.send({ message: newObj });
@@ -69,29 +53,6 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
       // res.redirect(req.session.returnTo || "/");
     });
   })(req, res, next);
-};
-
-/**
- * GET /logout
- * Log out.
- */
-export let logout = (req: Request, res: Response) => {
-  req.logout();
-  res.send({ message: "Logged Out"});
-  // res.redirect("/");
-};
-
-/**
- * GET /signup
- * Signup page.
- */
-export let getSignup = (req: Request, res: Response) => {
-  if (req.user) {
-    return res.redirect("/");
-  }
-  res.render("account/signup", {
-    title: "Create Account"
-  });
 };
 
 /**
@@ -146,16 +107,6 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
         // res.redirect("/");
       });
     });
-  });
-};
-
-/**
- * GET /account
- * Profile page.
- */
-export let getAccount = (req: Request, res: Response) => {
-  res.render("account/profile", {
-    title: "Account Management"
   });
 };
 
@@ -348,18 +299,8 @@ export let postReset = (req: Request, res: Response, next: NextFunction) => {
     res.redirect("/");
   });
 };
-
-/**
- * GET /forgot
- * Forgot Password page.
- */
-export let getForgot = (req: Request, res: Response) => {
-  if (req.isAuthenticated()) {
-    return res.redirect("/");
-  }
-  res.render("account/forgot", {
-    title: "Forgot Password"
-  });
+export let test = (req: Request, res: Response, next: NextFunction) => {
+  console.log("hit");
 };
 
 /**
@@ -424,4 +365,5 @@ export let postForgot = (req: Request, res: Response, next: NextFunction) => {
     if (err) { return next(err); }
     res.redirect("/forgot");
   });
+
 };

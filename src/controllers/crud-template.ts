@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as request from "request-promise";
 import { default as Brewery, BreweryModel } from "../models/Brewery";
 
-export class BeerController {
+export class CrudController {
 
   constructor() { }
 

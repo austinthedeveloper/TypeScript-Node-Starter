@@ -1,5 +1,4 @@
 import { BeerService } from "./../services/beerService";
-import { RetroService } from "./../services/retroService";
 import { Request, Response } from "express";
 import * as request from "request-promise";
 import { default as Brewery, BreweryModel } from "../models/Brewery";
