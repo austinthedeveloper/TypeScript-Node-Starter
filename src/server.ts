@@ -154,28 +154,28 @@ app.get("/api", apiController.getApi);
 app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
 const retroPath = "/api/retro/";
-app.get(`${retroPath}users`, retroController.getUsers);
-app.get(`${retroPath}user/:user`, retroController.getUser);
-app.get(`${retroPath}user/:user/summary`, retroController.getUserSummary);
-app.get(`${retroPath}user/:user/feed`, retroController.getUserFeed);
-app.get(`${retroPath}user/:user/recent`, retroController.getUserRecent);
-app.get(`${retroPath}user/:user/game/:game`, retroController.getUserProgress);
-app.get(`${retroPath}game/:game`, retroController.getGame);
-app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
-app.get(`${retroPath}console-ids`, retroController.getConsoles);
+app.get(`${retroPath}users`, retroController.getUsers)
+  .get(`${retroPath}user/:user`, retroController.getUser)
+  .get(`${retroPath}user/:user/summary`, retroController.getUserSummary)
+  .get(`${retroPath}user/:user/feed`, retroController.getUserFeed)
+  .get(`${retroPath}user/:user/recent`, retroController.getUserRecent)
+  .get(`${retroPath}user/:user/game/:game`, retroController.getUserProgress)
+  .get(`${retroPath}game/:game`, retroController.getGame)
+  .get(`${retroPath}game/:game/extended`, retroController.getGameExt)
+  .get(`${retroPath}console-ids`, retroController.getConsoles);
 
 const beerPath = "/api/beer/";
-app.post(`${beerPath}beers/save`, beerController.saveBeer)
-  .post(`${beerPath}beers/delete`, beerController.deleteBeer)
-  .get(`${beerPath}beers/:id`, beerController.savedBeers)
-  .get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
+app.post(`${beerPath}save`, beerController.saveBeer)
+  .post(`${beerPath}delete`, beerController.deleteBeer)
+  .get(`${beerPath}:id`, beerController.savedBeers)
+  .get(`${beerPath}:id/details`, beerController.getBeerDetails);
 
 const breweryPath = "/api/brewery/";
-app.get(`${breweryPath}brewery/search`, breweryController.findBrewery)
-  .get(`${breweryPath}brewery/:id`, breweryController.getBrewery)
-  .get(`${breweryPath}brewery/:id/beers`, breweryController.getBreweryBeers);
+app.get(`${breweryPath}search`, breweryController.findBrewery)
+  .get(`${breweryPath}:id`, breweryController.getBrewery)
+  .get(`${breweryPath}:id/beers`, breweryController.getBreweryBeers);
 
-app.route(`${beerPath}beers/:id/edit`)
+app.route(`${beerPath}crud/:id/edit`)
   // Get single
   .get(beerController.show)
   // Update
@@ -183,11 +183,11 @@ app.route(`${beerPath}beers/:id/edit`)
   // Remove
   .delete(beerController.remove);
 
+
 // CRUD Template
 const crudPath = "/api/crud-template/";
 import { CrudController } from "./controllers/crud-template";
 const crudController = new CrudController();
-
 /*
  * GET
  */
