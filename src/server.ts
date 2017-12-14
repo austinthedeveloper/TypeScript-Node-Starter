@@ -132,18 +132,14 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userControl
 /**
  * API User routes
  */
-app.get("/api/login", userApiController.getLogin);
 app.post("/api/login", userApiController.postLogin);
-app.get("/api/logout", userApiController.logout);
-app.get("/api/forgot", userApiController.getForgot);
 app.post("/api/forgot", userApiController.postForgot);
 app.get("/api/reset/:token", userApiController.getReset);
 app.post("/api/reset/:token", userApiController.postReset);
-app.get("/api/signup", userApiController.getSignup);
 app.post("/api/signup", userApiController.postSignup);
 app.get("/api/contact", contactController.getContact);
 app.post("/api/contact", contactController.postContact);
-app.get("/api/account", passportConfig.isAuthenticated, userApiController.getAccount);
+app.post("/api/test", passportConfig.isAuthenticated, userApiController.test);
 app.post("/api/account/profile", passportConfig.isAuthenticated, userApiController.postUpdateProfile);
 app.post("/api/account/password", passportConfig.isAuthenticated, userApiController.postUpdatePassword);
 app.post("/api/account/delete", passportConfig.isAuthenticated, userApiController.postDeleteAccount);
@@ -174,6 +170,32 @@ app.post(`${beerPath}beers/save`, beerController.saveBeer);
 app.post(`${beerPath}beers/delete`, beerController.deleteBeer);
 app.get(`${beerPath}beers/:id`, beerController.savedBeers);
 app.get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
+
+// CRUD Template
+const crudPath = "/api/crud-template/";
+import { CrudController } from "./controllers/crud-template";
+const crudController = new CrudController();
+/*
+ * GET
+ */
+app.get(`${crudPath}`, crudController.list);
+/*
+ * GET
+ */
+app.get(`${crudPath}:id`, crudController.show);
+/*
+ * POST
+ */
+app.post(`${crudPath}`, crudController.create);
+/*
+ * PUT
+ */
+app.put(`${crudPath}:id`, crudController.update);
+/*
+ * DELETE
+ */
+app.delete(`${crudPath}:id`, crudController.remove);
+// End CRUD Template
 
 /**
  * OAuth authentication routes. (Sign in)
