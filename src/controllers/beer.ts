@@ -15,10 +15,12 @@ export class BeerController {
     const options = beerService.options(`breweries`, { name: breweryName});
     request(options)
       .then((data) => {
-        res.send(data.data);
+        return res.send(data.data);
       })
       .catch((err) => {
-        console.log("error: ", err);
+        return res.status(500).send({
+          message: err
+        });
       });
   }
 
@@ -26,7 +28,9 @@ export class BeerController {
     const id = req.params.id;
     Brewery.findOne({id: id}, (err, data) => {
       if (err) {
-        res.send({message: "error"});
+        return res.status(500).send({
+          message: `Error`
+        });
       } else if (!data) {
         const options = beerService.options(`brewery/${id}`);
         request(options)
@@ -40,10 +44,12 @@ export class BeerController {
           res.send(data.data);
         })
         .catch((err) => {
-          console.log("error: ", err);
+          return res.status(500).send({
+            message: err
+          });
         });
       } else {
-        res.send(data);
+        return res.send(data);
       }
     });
 
@@ -58,7 +64,9 @@ export class BeerController {
         res.send(data.data);
       })
       .catch((err) => {
-        console.log("error: ", err);
+        return res.status(500).send({
+          message: err
+        });
       });
   }
 
@@ -66,24 +74,24 @@ export class BeerController {
     const body = req.body;
     BeerDetails.findOne({ id: body.id }, (err, data) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       } else if (!data) {
         const beer = new BeerDetails(body);
         beer.save((err) => {
           if (err) {
-            res.status(400);
-            res.send({ message: err });
-            return;
+            return res.status(500).send({
+              message: err
+            });
           } else {
-            res.send({ message: "success" });
+            return res.send({ message: "success" });
           }
         });
       } else {
-        res.status(400);
-        res.send({ message: "already exists" });
-        return;
+        return res.status(500).send({
+          message: "Already exists"
+        });
       }
     });
   }
@@ -92,24 +100,24 @@ export class BeerController {
     const body = req.body;
     Beer.findOne({ id: body.id }, (err, data) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       } else if (!data) {
         const beer = new Beer(body);
         beer.save((err, data) => {
           if (err) {
-            res.status(400);
-            res.send({ message: err });
-            return;
+            return res.status(500).send({
+              message: err
+            });
           } else {
-            res.send({ data });
+            return res.send({ data });
           }
         });
       } else {
-        res.status(400);
-        res.send({ message: "already exists" });
-        return;
+        return res.status(500).send({
+          message: "Already exists"
+        });
       }
     });
   }
@@ -118,11 +126,11 @@ export class BeerController {
     const body = req.body;
     Beer.remove({ id: body.id, user: body.userId }, (err) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       } else {
-        res.send({ message: "success" });
+        return res.send({ message: "success" });
       }
     });
   }
@@ -131,12 +139,11 @@ export class BeerController {
     const userId = req.params.id;
     Beer.find({ user: userId }, (err, data) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       } else {
-        res.send(data);
-        return;
+        return res.send(data);
       }
     });
   }
@@ -145,9 +152,9 @@ export class BeerController {
     const id = req.params.id;
     BeerDetails.findOne({ id: id }, (err, data) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       } else if (!data) {
         const options = beerService.options(`beer/${id}`);
         request(options)
@@ -155,16 +162,15 @@ export class BeerController {
             // save beer
             const beer = new BeerDetails(data);
             beer.save();
-            res.send(data.data);
+            return res.send(data.data);
           })
           .catch((err) => {
-            res.status(400);
-            res.send({ message: err });
-            return;
+            return res.status(500).send({
+              message: err
+            });
           });
       } else {
-        res.send(data);
-        return;
+        return res.send(data);
       }
     });
   }

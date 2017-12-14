@@ -22,37 +22,42 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
 
   if (errors) {
     const newObj = _.map(errors, "msg");
-    res.status(400);
-    res.send({ message: newObj });
-    return;
+    return res.status(500).send({
+      message: newObj
+    });
   }
 
   passport.authenticate("local", (err: Error, user: UserModel, info: LocalStrategyInfo) => {
     if (err) {
-      res.status(400);
-      res.send({ message: err });
-      return;
+      return res.status(500).send({
+        message: err
+      });
     }
     if (!user) {
-      res.status(400);
-      res.send({ message: info.message });
-      return;
-      // req.flash("errors", info.message);
-      // return res.redirect("/login");
+      return res.status(500).send({
+        message: info.message
+      });
     }
     req.logIn(user, (err) => {
       if (err) {
-        res.status(400);
-        res.send({ message: info.message });
-        return;
-        // return next(err);
+        return res.status(500).send({
+          message: info.message
+        });
       }
-
-      res.send(user);
-      // req.flash("success", { msg: "Success! You are logged in." });
-      // res.redirect(req.session.returnTo || "/");
+      return res.send(user);
     });
   })(req, res, next);
+};
+
+/**
+ * GET /logout
+ * Log out.
+ */
+export let logout = (req: Request, res: Response) => {
+  req.logout();
+  return res.send({
+    message: "Success"
+  });
 };
 
 /**
@@ -68,12 +73,10 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    // req.flash("errors", errors);
-    res.status(400);
     const newObj = _.map(errors, "msg");
-    res.send({ message: newObj});
-    return;
-    // return res.redirect("/signup");
+    return res.status(500).send({
+      message: newObj
+    });
   }
 
   const user = new User({
@@ -84,27 +87,23 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   User.findOne({ email: req.body.email }, (err, existingUser) => {
     if (err) { return next(err); }
     if (existingUser) {
-      // req.flash("errors", { msg: "Account with that email address already exists." });
-      res.status(400);
-      res.send({ message: "Account with that email address already exists." });
-      return;
-      // return res.redirect("/signup");
+      return res.status(500).send({
+        message: "Account with that email address already exists."
+      });
     }
     user.save((err) => {
       if (err) {
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       }
       req.logIn(user, (err) => {
         if (err) {
-          res.status(400);
-          res.send({ message: err });
-          return;
+          return res.status(500).send({
+            message: err
+          });
         }
-        res.send({ message: "Success" });
-        return;
-        // res.redirect("/");
+        return res.send({ message: "Success" });
       });
     });
   });
@@ -121,18 +120,16 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
   const errors = req.validationErrors();
 
   if (errors) {
-    res.status(400);
-    res.send({ message: errors });
-    return;
-    // req.flash("errors", errors);
-    // return res.redirect("/account");
+    return res.status(500).send({
+      message: errors
+    });
   }
 
   User.findById(req.user.id, (err, user: UserModel) => {
     if (err) {
-      res.status(400);
-      res.send({ message: err });
-      return;
+      return res.status(500).send({
+        message: err
+      });
      }
     user.email = req.body.email || "";
     user.profile.name = req.body.name || "";
@@ -142,18 +139,16 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
     user.save((err: WriteError) => {
       if (err) {
         if (err.code === 11000) {
-          res.status(400);
-          res.send({ message: "The email address you have entered is already associated with an account." });
-          return;
+          return res.status(500).send({
+            message: "The email address you have entered is already associated with an account."
+          });
         }
 
-        res.status(400);
-        res.send({ message: err });
-        return;
+        return res.status(500).send({
+          message: err
+        });
       }
-      res.send({ message: "Profile information has been updated."});
-      // req.flash("success", { msg: "Profile information has been updated." });
-      // res.redirect("/account");
+      return res.send({ message: "Profile information has been updated."});
     });
   });
 };
@@ -169,17 +164,28 @@ export let postUpdatePassword = (req: Request, res: Response, next: NextFunction
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/account");
+    const newObj = _.map(errors, "msg");
+    return res.status(500).send({
+      message: newObj
+    });
   }
 
   User.findById(req.user.id, (err, user: UserModel) => {
-    if (err) { return next(err); }
+    if (err) {
+      return res.status(500).send({
+        message: err
+      });
+    }
     user.password = req.body.password;
     user.save((err: WriteError) => {
-      if (err) { return next(err); }
-      req.flash("success", { msg: "Password has been changed." });
-      res.redirect("/account");
+      if (err) {
+        return res.status(500).send({
+          message: err
+        });
+       }
+      return res.send({
+        message: "Password has been changed."
+      });
     });
   });
 };
@@ -190,10 +196,14 @@ export let postUpdatePassword = (req: Request, res: Response, next: NextFunction
  */
 export let postDeleteAccount = (req: Request, res: Response, next: NextFunction) => {
   User.remove({ _id: req.user.id }, (err) => {
-    if (err) { return next(err); }
-    req.logout();
-    req.flash("info", { msg: "Your account has been deleted." });
-    res.redirect("/");
+    if (err) {
+      return res.status(500).send({
+        message: err
+      });
+    }
+    return res.send({
+      message: "Your account has been deleted."
+    });
   });
 };
 
@@ -204,13 +214,22 @@ export let postDeleteAccount = (req: Request, res: Response, next: NextFunction)
 export let getOauthUnlink = (req: Request, res: Response, next: NextFunction) => {
   const provider = req.params.provider;
   User.findById(req.user.id, (err, user: any) => {
-    if (err) { return next(err); }
+    if (err) {
+      return res.status(500).send({
+        message: err
+      });
+    }
     user[provider] = undefined;
     user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
     user.save((err: WriteError) => {
-      if (err) { return next(err); }
-      req.flash("info", { msg: `${provider} account has been unlinked.` });
-      res.redirect("/account");
+      if (err) {
+        return res.status(500).send({
+          message: err
+        });
+      }
+      return res.send({
+        message: `${provider} account has been unlinked.`
+      });
     });
   });
 };
@@ -221,19 +240,26 @@ export let getOauthUnlink = (req: Request, res: Response, next: NextFunction) =>
  */
 export let getReset = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) {
-    return res.redirect("/");
+    return res.status(500).send({
+      message: "Not Authenticated"
+    });
   }
   User
     .findOne({ passwordResetToken: req.params.token })
     .where("passwordResetExpires").gt(Date.now())
     .exec((err, user) => {
-      if (err) { return next(err); }
+      if (err) {
+        return res.status(500).send({
+          message: err
+        });
+       }
       if (!user) {
-        req.flash("errors", { msg: "Password reset token is invalid or has expired." });
-        return res.redirect("/forgot");
+        return res.status(500).send({
+          message: "Password reset token is invalid or has expired."
+        });
       }
-      res.render("account/reset", {
-        title: "Password Reset"
+      return res.send({
+        message: "Password Reset"
       });
     });
 };
@@ -249,8 +275,10 @@ export let postReset = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("back");
+    const newObj = _.map(errors, "msg");
+    return res.status(500).send({
+      message: newObj
+    });
   }
 
   async.waterfall([
@@ -298,9 +326,6 @@ export let postReset = (req: Request, res: Response, next: NextFunction) => {
     if (err) { return next(err); }
     res.redirect("/");
   });
-};
-export let test = (req: Request, res: Response, next: NextFunction) => {
-  console.log("hit");
 };
 
 /**

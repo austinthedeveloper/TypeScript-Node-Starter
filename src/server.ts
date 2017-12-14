@@ -133,13 +133,13 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userControl
  * API User routes
  */
 app.post("/api/login", userApiController.postLogin);
+app.get("/api/logout", userApiController.logout);
 app.post("/api/forgot", userApiController.postForgot);
 app.get("/api/reset/:token", userApiController.getReset);
 app.post("/api/reset/:token", userApiController.postReset);
 app.post("/api/signup", userApiController.postSignup);
 app.get("/api/contact", contactController.getContact);
 app.post("/api/contact", contactController.postContact);
-app.post("/api/test", passportConfig.isAuthenticated, userApiController.test);
 app.post("/api/account/profile", passportConfig.isAuthenticated, userApiController.postUpdateProfile);
 app.post("/api/account/password", passportConfig.isAuthenticated, userApiController.postUpdatePassword);
 app.post("/api/account/delete", passportConfig.isAuthenticated, userApiController.postDeleteAccount);
