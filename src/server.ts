@@ -35,10 +35,12 @@ import { ApiController } from "./controllers/api";
 import { ContactController } from "./controllers/contact";
 import { RetroController } from "./controllers/retro";
 import { BeerController } from "./controllers/beer";
+import { BreweryController } from "./controllers/brewery";
 const contactController = new ContactController();
 const apiController = new ApiController();
 const retroController = new RetroController();
 const beerController = new BeerController();
+const breweryController = new BreweryController();
 
 /**
  * API keys and Passport configuration.
@@ -140,10 +142,10 @@ app.post("/api/reset/:token", userApiController.postReset);
 app.post("/api/signup", userApiController.postSignup);
 app.get("/api/contact", contactController.getContact);
 app.post("/api/contact", contactController.postContact);
-app.post("/api/account/profile", passportConfig.isAuthenticated, userApiController.postUpdateProfile);
-app.post("/api/account/password", passportConfig.isAuthenticated, userApiController.postUpdatePassword);
-app.post("/api/account/delete", passportConfig.isAuthenticated, userApiController.postDeleteAccount);
-app.get("/api/account/unlink/:provider", passportConfig.isAuthenticated, userApiController.getOauthUnlink);
+app.post("/api/account/profile", passportConfig.isAuthenticatedApi, userApiController.postUpdateProfile);
+app.post("/api/account/password", passportConfig.isAuthenticatedApi, userApiController.postUpdatePassword);
+app.post("/api/account/delete", passportConfig.isAuthenticatedApi, userApiController.postDeleteAccount);
+app.get("/api/account/unlink/:provider", passportConfig.isAuthenticatedApi, userApiController.getOauthUnlink);
 
 /**
  * API examples routes.
@@ -163,41 +165,44 @@ app.get(`${retroPath}game/:game/extended`, retroController.getGameExt);
 app.get(`${retroPath}console-ids`, retroController.getConsoles);
 
 const beerPath = "/api/beer/";
-app.get(`${beerPath}brewery/search`, beerController.findBrewery);
-app.get(`${beerPath}brewery/:id`, beerController.getBrewery);
-app.get(`${beerPath}brewery/:id/beers`, beerController.getBreweryBeers);
-app.post(`${beerPath}beers/save`, beerController.saveBeer);
-app.post(`${beerPath}beers/delete`, beerController.deleteBeer);
-app.get(`${beerPath}beers/:id`, beerController.savedBeers);
-app.get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
-app.get(`${beerPath}beers/:id/edit`, beerController.show);
-app.put(`${beerPath}beers/:id/edit`, beerController.update);
+app.post(`${beerPath}beers/save`, beerController.saveBeer)
+  .post(`${beerPath}beers/delete`, beerController.deleteBeer)
+  .get(`${beerPath}beers/:id`, beerController.savedBeers)
+  .get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
+
+const breweryPath = "/api/brewery/";
+app.get(`${breweryPath}brewery/search`, breweryController.findBrewery)
+  .get(`${breweryPath}brewery/:id`, breweryController.getBrewery)
+  .get(`${breweryPath}brewery/:id/beers`, breweryController.getBreweryBeers);
+
+app.route(`${beerPath}beers/:id/edit`)
+  // Get single
+  .get(beerController.show)
+  // Update
+  .put(beerController.update)
+  // Remove
+  .delete(beerController.remove);
 
 // CRUD Template
 const crudPath = "/api/crud-template/";
 import { CrudController } from "./controllers/crud-template";
 const crudController = new CrudController();
+
 /*
  * GET
  */
-app.get(`${crudPath}`, crudController.list);
-/*
- * GET
- */
-app.get(`${crudPath}:id`, crudController.show);
-/*
- * POST
- */
-app.post(`${crudPath}`, crudController.create);
-/*
- * PUT
- */
-app.put(`${crudPath}:id`, crudController.update);
-/*
- * DELETE
- */
-app.delete(`${crudPath}:id`, crudController.remove);
-// End CRUD Template
+app.route(`${crudPath}`)
+  // Get full list
+  .get(crudController.list)
+  // Create item
+  .post(crudController.create);
+app.route(`${crudPath}:id`)
+  // Get single
+  .get(crudController.show)
+  // Update
+  .put(crudController.update)
+  // Remove
+  .delete(crudController.remove);
 
 /**
  * OAuth authentication routes. (Sign in)

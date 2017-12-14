@@ -128,6 +128,18 @@ export let isAuthenticated = (req: Request, res: Response, next: NextFunction) =
   res.redirect("/login");
 };
 
+export let isAuthenticatedApi = (req: Request, res: Response, next: NextFunction) => {
+  console.log("auth");
+  if (req.isAuthenticated()) {
+    console.log("auth success");
+    return next();
+  }
+  console.log("fail");
+  return res.status(500).send({
+    message: `Not Authenticated.`
+  });
+};
+
 /**
  * Authorization Required middleware.
  */
