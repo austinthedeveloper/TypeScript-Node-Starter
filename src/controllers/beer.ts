@@ -175,4 +175,59 @@ export class BeerController {
     });
   }
 
+  /**
+   * show
+   */
+  objectProper = "beer";
+  show(req: Request, res: Response) {
+    const id = req.params.id;
+    Beer.findOne({ _id: id }, (err, data) => {
+      if (err) {
+        return res.status(500).send({
+          message: `Error getting ${this.objectProper}.`
+        });
+      }
+      if (!data) {
+        return res.status(404).send({
+          message: `No such ${this.objectProper}.`
+        });
+      }
+      return res.send(data);
+    });
+  }
+
+  /**
+   * update
+   */
+  update(req: Request, res: Response) {
+    const id = req.params.id;
+    Beer.findOne({ _id: id }, (err, data) => {
+      if (err) {
+        return res.status(500).send({
+          message: `Error saving ${this.objectProper}.`,
+          error: err
+        });
+      }
+      if (!data) {
+        return res.status(404).send({
+          message: `No such ${this.objectProper}.`
+        });
+      }
+
+      data.save((err, saved) => {
+        if (err) {
+          return res.status(500).send({
+            message: `Error getting ${this.objectProper}.`
+          });
+        }
+        if (!saved) {
+          return res.status(404).send({
+            message: `No such ${this.objectProper}.`
+          });
+        }
+        return res.send(saved);
+      });
+    });
+  }
+
 }

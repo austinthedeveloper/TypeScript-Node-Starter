@@ -170,6 +170,8 @@ app.post(`${beerPath}beers/save`, beerController.saveBeer);
 app.post(`${beerPath}beers/delete`, beerController.deleteBeer);
 app.get(`${beerPath}beers/:id`, beerController.savedBeers);
 app.get(`${beerPath}beers/:id/details`, beerController.getBeerDetails);
+app.get(`${beerPath}beers/:id/edit`, beerController.show);
+app.put(`${beerPath}beers/:id/edit`, beerController.update);
 
 // CRUD Template
 const crudPath = "/api/crud-template/";
