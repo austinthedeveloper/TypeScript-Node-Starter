@@ -1,6 +1,7 @@
 import { BeerService } from "./../services/beerService";
 import { Request, Response } from "express";
 import * as request from "request-promise";
+import * as _ from "lodash";
 import { default as BeerDetails, BeerDetailsModel } from "../models/Beer-Details";
 import { default as Beer, BeerModel } from "../models/Beer";
 const beerService = new BeerService();
@@ -120,7 +121,7 @@ export class BeerController {
   objectProper = "beer";
   show(req: Request, res: Response) {
     const id = req.params.id;
-    Beer.findOne({ _id: id }, (err, data) => {
+    Beer.findOne({ _id: id }, (err, data: BeerModel) => {
       if (err) {
         return res.status(500).send({
           message: `Error getting ${this.objectProper}.`
@@ -131,7 +132,24 @@ export class BeerController {
           message: `No such ${this.objectProper}.`
         });
       }
-      return res.send(data);
+      // Get the original obj
+      BeerDetails.findOne({ id: data.id }, (err, detailsData: BeerDetailsModel) => {
+        if (err) {
+          return res.status(500).send({
+            message: err
+          });
+        } else if (!detailsData) {
+          return res.send({
+            data: data
+          });
+        } else {
+          return res.send({
+            data: data,
+            original: detailsData
+          });
+        }
+      });
+      // return res.send(data);
     });
   }
 
@@ -140,7 +158,7 @@ export class BeerController {
    */
   update(req: Request, res: Response) {
     const id = req.params.id;
-    Beer.findOne({ _id: id }, (err, data) => {
+    Beer.findOne({ _id: id }, (err, data: BeerModel) => {
       if (err) {
         return res.status(500).send({
           message: `Error saving ${this.objectProper}.`,
@@ -152,6 +170,8 @@ export class BeerController {
           message: `No such ${this.objectProper}.`
         });
       }
+
+      data = _.extend(data, req.body);
 
       data.save((err, saved) => {
         if (err) {

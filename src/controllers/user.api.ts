@@ -114,28 +114,20 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
  * Update profile information.
  */
 export let postUpdateProfile = (req: Request, res: Response, next: NextFunction) => {
-  req.assert("email", "Please enter a valid email address.").isEmail();
-  req.sanitize("email").normalizeEmail({ gmail_remove_dots: false });
-
-  const errors = req.validationErrors();
-
-  if (errors) {
-    return res.status(500).send({
-      message: errors
-    });
-  }
-
   User.findById(req.user.id, (err, user: UserModel) => {
     if (err) {
       return res.status(500).send({
         message: err
       });
      }
-    user.email = req.body.email || "";
-    user.profile.name = req.body.name || "";
-    user.profile.gender = req.body.gender || "";
-    user.profile.location = req.body.location || "";
-    user.profile.website = req.body.website || "";
+    if (req.body.profile) {
+      user.profile.name = req.body.profile.name || "";
+      user.profile.gender = req.body.profile.gender || "";
+      user.profile.location = req.body.profile.location || "";
+      user.profile.website = req.body.profile.website || "";
+    }
+    // user.email = req.body.email || "";
+
     user.save((err: WriteError) => {
       if (err) {
         if (err.code === 11000) {

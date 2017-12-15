@@ -26,7 +26,7 @@ const beerSchema = new mongoose.Schema({
   stock: { type: Boolean, default: true },
   type: { type: String, default: "keg" },
   user: String
-});
+}, { timestamps: true });
 
 // export const User: UserType = mongoose.model<UserType>('User', userSchema);
 const Beer = mongoose.model("Beer", beerSchema);

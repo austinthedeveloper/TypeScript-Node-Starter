@@ -72,7 +72,10 @@ app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
 app.use(compression());
 app.use(logger("dev"));
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:4200", "https://beer-wall.herokuapp.com/"],
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
@@ -165,8 +168,8 @@ app.get(`${retroPath}users`, retroController.getUsers)
   .get(`${retroPath}console-ids`, retroController.getConsoles);
 
 const beerPath = "/api/beer/";
-app.post(`${beerPath}save`, beerController.saveBeer)
-  .post(`${beerPath}delete`, beerController.deleteBeer)
+app.post(`${beerPath}save`, passportConfig.isAuthenticated, beerController.saveBeer)
+  .post(`${beerPath}delete`, passportConfig.isAuthenticated, beerController.deleteBeer)
   .get(`${beerPath}:id`, beerController.savedBeers)
   .get(`${beerPath}:id/details`, beerController.getBeerDetails);
 
