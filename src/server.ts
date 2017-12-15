@@ -187,6 +187,25 @@ app.route(`${beerPath}crud/:id/edit`)
   .delete(beerController.remove);
 
 
+// Company
+const companyPath = "/api/company/";
+import { CompanyController } from "./controllers/company";
+const companyController = new CompanyController();
+
+app.route(`${companyPath}`)
+  // Get full list
+  .get(companyController.list)
+  // Create item
+  .post(companyController.create);
+app.route(`${companyPath}:id`)
+  // Get single
+  .get(companyController.show)
+  // Update
+  .put(companyController.update)
+  // Remove
+  .delete(companyController.remove);
+
+
 // CRUD Template
 const crudPath = "/api/crud-template/";
 import { CrudController } from "./controllers/crud-template";
