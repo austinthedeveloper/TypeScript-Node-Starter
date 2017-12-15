@@ -6,14 +6,16 @@ export type CompanyModel = mongoose.Document & {
   name: string,
   location: string,
   logo: string,
-  owner: string
+  owner: string,
+  phone: string
 };
 
 const companySchema = new mongoose.Schema({
   name: String,
   location: String,
   logo: String,
-  owner: String
+  owner: String,
+  phone: String
 }, { timestamps: true });
 
 // export const User: UserType = mongoose.model<UserType>('User', userSchema);

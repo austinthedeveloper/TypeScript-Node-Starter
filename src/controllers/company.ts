@@ -47,7 +47,6 @@ export class CompanyController {
    * create
    */
   create(req: Request, res: Response) {
-    console.log("res", req.body);
     const company = new Company(req.body);
 
     company.save(function (err, data) {
