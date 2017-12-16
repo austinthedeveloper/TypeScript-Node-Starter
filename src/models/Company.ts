@@ -7,6 +7,7 @@ export type CompanyModel = mongoose.Document & {
   location: string,
   logo: string,
   owner: string,
+  users: string[]
   phone: string
 };
 
@@ -15,6 +16,7 @@ const companySchema = new mongoose.Schema({
   location: String,
   logo: String,
   owner: String,
+  users: { type: [String], default: [] },
   phone: String
 }, { timestamps: true });
 

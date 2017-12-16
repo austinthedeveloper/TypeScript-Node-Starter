@@ -149,6 +149,8 @@ app.post("/api/account/profile", passportConfig.isAuthenticatedApi, userApiContr
 app.post("/api/account/password", passportConfig.isAuthenticatedApi, userApiController.postUpdatePassword);
 app.post("/api/account/delete", passportConfig.isAuthenticatedApi, userApiController.postDeleteAccount);
 app.get("/api/account/unlink/:provider", passportConfig.isAuthenticatedApi, userApiController.getOauthUnlink);
+app.get("/api/users", passportConfig.isAuthenticatedApi, userApiController.list);
+app.get("/api/user/:id", passportConfig.isAuthenticatedApi, userApiController.show);
 
 /**
  * API examples routes.

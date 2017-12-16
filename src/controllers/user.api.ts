@@ -120,13 +120,8 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
         message: err
       });
      }
-    if (req.body.profile) {
-      user.profile.name = req.body.profile.name || "";
-      user.profile.gender = req.body.profile.gender || "";
-      user.profile.location = req.body.profile.location || "";
-      user.profile.website = req.body.profile.website || "";
-    }
-    // user.email = req.body.email || "";
+
+    user = _.extend(user, req.body);
 
     user.save((err: WriteError) => {
       if (err) {
@@ -317,6 +312,35 @@ export let postReset = (req: Request, res: Response, next: NextFunction) => {
   ], (err) => {
     if (err) { return next(err); }
     res.redirect("/");
+  });
+};
+
+// Get users
+export let list = (req: Request, res: Response) => {
+  User.find((err, data: UserModel[]) => {
+    if (err) {
+      return res.status(500).send({
+        message: `Error getting users.`
+      });
+    }
+    return res.send(data);
+  });
+};
+
+export let show = (req: Request, res: Response) => {
+  const id = req.params.id;
+  User.findOne({ _id: id }, (err, data: UserModel) => {
+    if (err) {
+      return res.status(500).send({
+        message: `Error getting user.`
+      });
+    }
+    if (!data) {
+      return res.status(404).send({
+        message: `No such user.`
+      });
+    }
+    return res.send(data);
   });
 };
 
