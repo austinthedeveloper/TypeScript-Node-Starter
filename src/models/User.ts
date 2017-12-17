@@ -31,7 +31,7 @@ export type AuthToken = {
 };
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
+  email: { type: String, unique: true, lowercase: true },
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -42,15 +42,18 @@ const userSchema = new mongoose.Schema({
   tokens: Array,
 
   profile: {
-    name: String,
-    gender: String,
-    location: String,
-    website: String,
-    picture: String,
-    company: String,
-    phone: String
+    type: {
+      name: String,
+      gender: String,
+      location: String,
+      website: String,
+      picture: String,
+      company: String,
+      phone: String
+    },
+    default: {}
   }
-}, { timestamps: true });
+}, { timestamps: true, minimize: false});
 
 /**
  * Password hash middleware.

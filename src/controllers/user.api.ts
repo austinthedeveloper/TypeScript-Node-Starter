@@ -408,3 +408,27 @@ export let postForgot = (req: Request, res: Response, next: NextFunction) => {
   });
 
 };
+
+export let getUsers = (req: Request, res: Response) => {
+  const id = req.params.id;
+  User.find({ "profile.company": id}, (err, data: UserModel[]) => {
+    if (err) {
+      return res.status(500).send({
+        message: `Error getting users.`
+      });
+    }
+    return res.send(data);
+  });
+};
+
+export let remove = (req: Request, res: Response) => {
+  const id = req.params.id;
+  User.findByIdAndRemove(id, (err, data) => {
+    if (err) {
+      return res.status(500).send({
+        message: `Error getting user.`
+      });
+    }
+    return res.send(data);
+  });
+};

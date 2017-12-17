@@ -150,7 +150,9 @@ app.post("/api/account/password", passportConfig.isAuthenticatedApi, userApiCont
 app.post("/api/account/delete", passportConfig.isAuthenticatedApi, userApiController.postDeleteAccount);
 app.get("/api/account/unlink/:provider", passportConfig.isAuthenticatedApi, userApiController.getOauthUnlink);
 app.get("/api/users", passportConfig.isAuthenticatedApi, userApiController.list);
-app.get("/api/user/:id", passportConfig.isAuthenticatedApi, userApiController.show);
+app.route("/api/user/:id")
+  .get(passportConfig.isAuthenticatedApi, userApiController.show)
+  .delete(passportConfig.isAuthenticatedApi, userApiController.remove);
 
 /**
  * API examples routes.
@@ -206,6 +208,8 @@ app.route(`${companyPath}:id`)
   .put(companyController.update)
   // Remove
   .delete(companyController.remove);
+app.route(`${companyPath}:id/users`)
+  .get(userApiController.getUsers);
 
 
 // CRUD Template
