@@ -44,6 +44,7 @@ export class BeerController {
           message: err
         });
       } else if (!data) {
+        console.log("hit", body);
         const beer = new Beer(body);
         beer.save((err, data) => {
           if (err) {

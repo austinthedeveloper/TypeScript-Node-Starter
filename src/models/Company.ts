@@ -8,18 +8,19 @@ export type CompanyModel = mongoose.Document & {
   logo: string,
   owner: string,
   users: string[]
-  phone: string
+  phone: string,
+  status: string
 };
 
 const companySchema = new mongoose.Schema({
   name: String,
   location: String,
   logo: String,
-  owner: String,
-  users: { type: [String], default: [] },
-  phone: String
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  phone: String,
+  status: { type: String, default: "draft"},
 }, { timestamps: true });
 
-// export const User: UserType = mongoose.model<UserType>('User', userSchema);
 const Company = mongoose.model("Company", companySchema);
 export default Company;

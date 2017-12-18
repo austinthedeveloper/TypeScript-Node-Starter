@@ -18,6 +18,8 @@ public/css/main.css
 
 # API keys and secrets
 .env
+.env.example
+.env.*
 
 # Dependency directory
 node_modules
@@ -33,5 +35,5 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
-.env.example
-.env.*
+
+

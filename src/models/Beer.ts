@@ -25,7 +25,7 @@ const beerSchema = new mongoose.Schema({
   category: String,
   stock: { type: Boolean, default: true },
   type: { type: String, default: "keg" },
-  user: String
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 }, { timestamps: true });
 
 // export const User: UserType = mongoose.model<UserType>('User', userSchema);

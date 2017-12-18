@@ -9,6 +9,7 @@ export type UserModel = mongoose.Document & {
   passwordResetExpires: Date,
 
   facebook: string,
+  company: string,
   tokens: AuthToken[],
 
   profile: {
@@ -17,7 +18,6 @@ export type UserModel = mongoose.Document & {
     location: string,
     website: string,
     picture: string,
-    company: string,
     phone: string,
   },
 
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   twitter: String,
   google: String,
   tokens: Array,
-
+  company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
   profile: {
     type: {
       name: String,
@@ -48,7 +48,6 @@ const userSchema = new mongoose.Schema({
       location: String,
       website: String,
       picture: String,
-      company: String,
       phone: String
     },
     default: {}

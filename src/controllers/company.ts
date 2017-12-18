@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as request from "request-promise";
 import { default as Company, CompanyModel } from "../models/Company";
 import * as _ from "lodash";
-
+import * as mongoose from "mongoose";
 export class CompanyController {
 
   constructor() { }
@@ -13,6 +13,7 @@ export class CompanyController {
    * list
    */
   list(req: Request, res: Response) {
+    const status = req.query.status || "draft";
     Company.find((err, data: CompanyModel) => {
       if (err) {
         return res.status(500).send({
@@ -28,7 +29,9 @@ export class CompanyController {
    */
   show(req: Request, res: Response) {
     const id = req.params.id;
-    Company.findOne({ _id: id }, (err, data: CompanyModel) => {
+    Company.findOne({ _id: id })
+    .populate("users")
+    .exec((err, data: CompanyModel) => {
       if (err) {
         return res.status(500).send({
           message: `Error getting ${this.objectProper}.`
@@ -39,6 +42,7 @@ export class CompanyController {
           message: `No such ${this.objectProper}.`
         });
       }
+      console.log(data.users);
       return res.send(data);
     });
   }
@@ -48,7 +52,6 @@ export class CompanyController {
    */
   create(req: Request, res: Response) {
     const company = new Company(req.body);
-
     company.save(function (err, data) {
       if (err) {
         return res.status(500).send({

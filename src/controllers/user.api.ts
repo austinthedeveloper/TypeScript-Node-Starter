@@ -119,8 +119,10 @@ export let postUpdateProfile = (req: Request, res: Response, next: NextFunction)
       return res.status(500).send({
         message: err
       });
-     }
+    }
 
+    delete req.body.password;
+    console.log("profile", req.body.profile);
     user = _.extend(user, req.body);
 
     user.save((err: WriteError) => {
@@ -329,7 +331,9 @@ export let list = (req: Request, res: Response) => {
 
 export let show = (req: Request, res: Response) => {
   const id = req.params.id;
-  User.findOne({ _id: id }, (err, data: UserModel) => {
+  User.findOne({ _id: id })
+  // .populate("company")
+  .exec((err, data: UserModel) => {
     if (err) {
       return res.status(500).send({
         message: `Error getting user.`
