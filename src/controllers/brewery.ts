@@ -54,6 +54,22 @@ export class BreweryController {
 
   }
 
+  // Get a list of breweries. Does not work unless have premium access
+  getBreweries(req: Request, res: Response) {
+    const page = req.query.page || 1;
+    const options = beerService.options(`breweries`, {p: page});
+    request(options)
+      .then((data) => {
+        res.send(data);
+      })
+      .catch((err) => {
+        return res.status(500).send({
+          message: err.error.errorMessage
+        });
+      });
+
+  }
+
   getBreweryBeers(req: Request, res: Response) {
     const options = beerService.options(`brewery/${req.params.id}/beers`);
     request(options)

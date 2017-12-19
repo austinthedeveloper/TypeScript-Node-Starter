@@ -180,6 +180,7 @@ app.post(`${beerPath}save`, passportConfig.isAuthenticated, beerController.saveB
 const breweryPath = "/api/brewery/";
 app.get(`${breweryPath}search`, breweryController.findBrewery)
   .get(`${breweryPath}:id`, breweryController.getBrewery)
+  .get(`${breweryPath}`, breweryController.getBreweries)
   .get(`${breweryPath}:id/beers`, breweryController.getBreweryBeers);
 
 app.route(`${beerPath}crud/:id/edit`)

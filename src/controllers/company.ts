@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as request from "request-promise";
 import { default as Company, CompanyModel } from "../models/Company";
+import { default as User, UserModel } from "../models/User";
 import * as _ from "lodash";
 import * as mongoose from "mongoose";
 export class CompanyController {
@@ -14,7 +15,9 @@ export class CompanyController {
    */
   list(req: Request, res: Response) {
     const status = req.query.status || "draft";
-    Company.find((err, data: CompanyModel) => {
+    Company.find()
+    .populate("owner")
+    .exec((err, data: CompanyModel) => {
       if (err) {
         return res.status(500).send({
           message: `Error getting ${this.objectProper}.`
@@ -113,6 +116,16 @@ export class CompanyController {
           message: `Error getting ${this.objectProper}.`
         });
       }
+      // User
+      // .find({company: id}, (err, data: UserModel[]) => {
+      //   if (data) {
+      //     console.log("data", data);
+      //     _.forEach(data, res => {
+      //       res.company = "";
+      //       res.save();
+      //     });
+      //   }
+      // });
       return res.send(data);
     });
   }

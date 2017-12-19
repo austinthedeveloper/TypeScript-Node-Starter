@@ -44,7 +44,6 @@ export class BeerController {
           message: err
         });
       } else if (!data) {
-        console.log("hit", body);
         const beer = new Beer(body);
         beer.save((err, data) => {
           if (err) {
@@ -52,7 +51,7 @@ export class BeerController {
               message: err
             });
           } else {
-            return res.send({ data });
+            return res.send(data);
           }
         });
       } else {
@@ -77,8 +76,8 @@ export class BeerController {
   }
 
   savedBeers(req: Request, res: Response) {
-    const userId = req.params.id;
-    Beer.find({ user: userId }, (err, data) => {
+    const company = req.params.id;
+    Beer.find({ company: company }, (err, data) => {
       if (err) {
         return res.status(500).send({
           message: err

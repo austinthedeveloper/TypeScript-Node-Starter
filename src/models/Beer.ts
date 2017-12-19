@@ -12,7 +12,8 @@ export type BeerModel = mongoose.Document & {
   category: string,
   stock: boolean,
   type: string,
-  user: string
+  owner: string,
+  company: string
 };
 
 const beerSchema = new mongoose.Schema({
@@ -25,7 +26,8 @@ const beerSchema = new mongoose.Schema({
   category: String,
   stock: { type: Boolean, default: true },
   type: { type: String, default: "keg" },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
 }, { timestamps: true });
 
 // export const User: UserType = mongoose.model<UserType>('User', userSchema);
